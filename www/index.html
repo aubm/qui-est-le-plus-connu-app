@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>Qui est le plus connu ?</title>
+
+    <link rel="stylesheet" href="lib/angular-chart.js/dist/angular-chart.css">
+    <link rel="stylesheet" href="lib/angular-spinkit/build/angular-spinkit.min.css">
+
+    <!-- compiled css output -->
+    <link href="css/ionic.app.css" rel="stylesheet">
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="lib/Chart.js/Chart.min.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="lib/ngCordova/dist/ng-cordova.js"></script>
+    <script src="lib/firebase/firebase.js"></script>
+    <script src="lib/angularfire/dist/angularfire.min.js"></script>
+    <script src="lib/angular-chart.js/dist/angular-chart.js"></script>
+    <script src="lib/angular-local-storage/dist/angular-local-storage.min.js"></script>
+    <script src="lib/ionic-imagecache/ionic.ion.imagecachefactory.js"></script>
+    <script src="lib/angular-spinkit/build/angular-spinkit.min.js"></script>
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="src/app.js"></script>
+    <script src="src/celebrities/card/celebrity-card.js"></script>
+    <script src="src/celebrities/celebrities-manager.js"></script>
+    <script src="src/celebrities/duet/chart/duet-chart.js"></script>
+    <script src="src/celebrities/duet/duet-controller.js"></script>
+    <script src="src/common/load-indicator/load-indicator.js"></script>
+    <script src="src/common/persistence/simple-local-persistence.js"></script>
+</head>
+<body ng-app="starter" ng-cloak>
+    <ion-pane>
+        <ion-header-bar class="bar-balanced">
+        <h1 class="title">Qui est le plus connu ?</h1>
+        </ion-header-bar>
+        <ion-content scroll="false">
+            <ion-nav-view>
+                <load-indicator show="true"></load-indicator>
+            </ion-nav-view>
+        </ion-content>
+    </ion-pane>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<div class="row choices">
+    <div class="col col-50 choice" ng-repeat="choice in cdc.choices" ng-click="cdc.select(choice)">
+        <celebrity-card
+            celebrity="choice"
+            is-selected="choice.name == cdc.currentChoice.name && !cdc.voteSubmitted"
+            images-origin="cdc.imagesOrigin"></celebrity-card>
+    </div>
+</div>
+
+<load-indicator show="cdc.loadingChart"></load-indicator>
+
+<div class="row" ng-if="!cdc.voteSubmitted">
+    <button class="button button-block button-balanced" ng-disabled="!cdc.currentChoice" ng-click="cdc.submitVote()">{{ cdc.currentChoice ? 'Je dirais ' + cdc.currentChoice.name + ' !' : 'Hum ...' }}</button>
+</div>
+
+<duet-chart chart="cdc.chart"></duet-chart>

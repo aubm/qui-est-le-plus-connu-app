@@ -1,0 +1,12 @@
+<div class="row" ng-if="duetchart.chart">
+    <canvas
+        class="chart chart-bar"
+        chart-data="duetchart.chart.data"
+        chart-labels="duetchart.chart.labels"
+        chart-options="duetchart.chart.options"
+        chart-colours="duetchart.chart.colors"></canvas>
+</div>
+<div class="row counters" ng-if="duetchart.chart">
+    <div class="col col-50"><h4>{{ duetchart.chart.data[0][0] }}</h4></div>
+    <div class="col col-50"><h4>{{ duetchart.chart.data[0][1] }}</h4></div>
+</div>

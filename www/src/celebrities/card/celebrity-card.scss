@@ -1,0 +1,12 @@
+celebrity-card {
+    text-align: center;
+
+    img {
+        max-width: 100%;
+        border-radius: 50%;
+        border: solid 3px #ffffff;
+        &.selected {
+            border-color: $balanced;
+        }
+    }
+}
