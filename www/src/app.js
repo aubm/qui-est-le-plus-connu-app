@@ -6,7 +6,13 @@
 angular.module('starter', ['ionic', 'ngCordova', 'ionic.ion.imageCacheFactory',
     'lpc.common.loadIndicator', 'lpc.celebrities.duet.duetController'])
 
-.run(function($ionicPlatform) {
+.run(lpcStarterRun)
+.config(lpcStarterConfig)
+.constant('firebaseOrigin', 'https://le-plus-connu.firebaseio.com')
+.constant('imagesOrigin', 'https://qui-est-le-plus-connu.github.io/images/celebrities')
+.constant('celebritiesUrl', 'https://qui-est-le-plus-connu.github.io/db.json');
+
+function lpcStarterRun($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -17,9 +23,9 @@ angular.module('starter', ['ionic', 'ngCordova', 'ionic.ion.imageCacheFactory',
       StatusBar.styleDefault();
     }
   });
-})
+}
 
-.config(function($stateProvider, $urlRouterProvider) {
+function lpcStarterConfig($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/');
 
     $stateProvider.state('root', {
@@ -44,8 +50,4 @@ angular.module('starter', ['ionic', 'ngCordova', 'ionic.ion.imageCacheFactory',
         templateUrl: 'src/celebrities/duet/duet.tpl.html',
         controller: 'CelebritiesDuetCtrl as cdc'
     });
-})
-
-.constant('firebaseOrigin', 'https://le-plus-connu.firebaseio.com')
-.constant('imagesOrigin', 'https://qui-est-le-plus-connu.github.io/images/celebrities')
-.constant('celebritiesUrl', 'https://qui-est-le-plus-connu.github.io/db.json')
+}

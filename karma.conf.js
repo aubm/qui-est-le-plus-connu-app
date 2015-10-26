@@ -15,7 +15,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'www/lib/angular/angular.js',
+      'www/lib/ionic/js/ionic.bundle.js',
+      'www/lib/ngCordova/dist/ng-cordova.js',
+      'www/lib/ionic-imagecache/ionic.ion.imagecachefactory.js',
       'www/lib/angular-local-storage/dist/angular-local-storage.js',
       'www/lib/angular-spinkit/build/angular-spinkit.min.js',
       'www/lib/Chart.js/Chart.min.js',
