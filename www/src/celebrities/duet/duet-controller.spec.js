@@ -25,6 +25,8 @@ describe('lpc.celebrities.duet.duetController', function() {
             { id: 'kendji_girac', image_name: 'kendji_girac.jpg', name: 'Kendji Girac' }
         ];
         var mockVoteData = { 'alexandre_astier': 50, 'kendji_girac': null };
+        var getVotesErrorMessage = "Impossible d'obtenir les votes pour ces célébrités ... :(";
+        var voteSubmissionErrorMessage = "Impossible d'enregistrer votre vote pour le moment ... :(";
 
         beforeEach(function() {
             createController = $controller('CelebritiesDuetCtrl', {
@@ -126,11 +128,35 @@ describe('lpc.celebrities.duet.duetController', function() {
             expect(vm.loadingChart).toBe(false);
         });
 
+        it('should handle vote submission error', function() {
+            spyOn(mockCelebritiesManager, 'getUserVote').and.returnValue(rejectedPromise());
+            spyOn(mockCelebritiesManager, 'voteForACelebrity').and.returnValue(rejectedPromise(voteSubmissionErrorMessage));
+            spyOn(mockCelebritiesManager, 'logUserVote');
+            spyOn($mockCordovaDialogs, 'alert');
+
+            var vm = createController();
+
+            $rootScope.$digest();
+
+            expect($mockCordovaDialogs.alert).not.toHaveBeenCalled();
+
+            vm.currentChoice = vm.choices[0];
+            vm.submitVote();
+
+            $rootScope.$digest();
+
+            expect(mockCelebritiesManager.voteForACelebrity).toHaveBeenCalled();
+            expect(mockCelebritiesManager.logUserVote).not.toHaveBeenCalled();
+            expect($mockCordovaDialogs.alert).toHaveBeenCalledWith(voteSubmissionErrorMessage, "Hum ...");
+            expect(vm.loadingChart).toBe(false);
+            expect(vm.voteSubmitted).toBe(false);
+        });
+
         it('should handle vote data error', function() {
             spyOn(mockCelebritiesManager, 'getUserVote').and.returnValue(rejectedPromise());
             spyOn(mockCelebritiesManager, 'voteForACelebrity').and.returnValue(resolvedPromise());
             spyOn(mockCelebritiesManager, 'logUserVote').and.returnValue(resolvedPromise());
-            spyOn(mockCelebritiesManager, 'getVotesForCelebrities').and.returnValue(rejectedPromise());
+            spyOn(mockCelebritiesManager, 'getVotesForCelebrities').and.returnValue(rejectedPromise(getVotesErrorMessage));
             spyOn($mockCordovaDialogs, 'alert');
 
             var choiceIndex = 0;
@@ -138,12 +164,17 @@ describe('lpc.celebrities.duet.duetController', function() {
 
             $rootScope.$digest();
 
+            expect($mockCordovaDialogs.alert).not.toHaveBeenCalled();
+
             vm.currentChoice = vm.choices[0];
             vm.submitVote();
 
             $rootScope.$digest();
 
-            expect($mockCordovaDialogs.alert).toHaveBeenCalledWith("Impossible d'obtenir les votes pour ces célébrités ... :(", "Hum ...");
+            expect(mockCelebritiesManager.voteForACelebrity).toHaveBeenCalled();
+            expect(mockCelebritiesManager.logUserVote).toHaveBeenCalled();
+            expect(mockCelebritiesManager.getVotesForCelebrities).toHaveBeenCalled();
+            expect($mockCordovaDialogs.alert).toHaveBeenCalledWith(getVotesErrorMessage, "Hum ...");
             expect(vm.loadingChart).toBe(false);
         });
 

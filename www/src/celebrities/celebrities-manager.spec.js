@@ -61,11 +61,31 @@ describe('lpc.celebrities.celebritiesManager', function() {
 
         it('should get vote data for celebrities', function() {
             spyOn(window, 'Firebase');
+            spyOn($mockFirebaseObjectReturn, '$loaded').and.returnValue(resolvedPromise());
 
             var expectedArg = 'https://this-is-a-test.firebaseio.com/votes/alexandre_astier_kendji_girac';
             celebritiesManager.getVotesForCelebrities(mockCelebrities.slice(0, 2));
 
             expect(window.Firebase).toHaveBeenCalledWith(expectedArg);
+        });
+
+        it('should return an proper error message when getting vote data fails', function(done) {
+            spyOn(window, 'Firebase');
+            spyOn($mockFirebaseObjectReturn, '$loaded').and.returnValue(rejectedPromise());
+
+            celebritiesManager.getVotesForCelebrities(mockCelebrities.slice(0, 2))
+                .then(onResolve, onReject)
+                .finally(done);
+
+            $rootScope.$digest();
+
+            function onResolve() {
+                fail('Promise should be rejected');
+            }
+
+            function onReject(v) {
+                expect(v).toBe("Impossible d'obtenir les votes pour ces célébrités ... :(");
+            }
         });
 
         it('should vote for a celebrity', function() {
@@ -83,6 +103,25 @@ describe('lpc.celebrities.celebritiesManager', function() {
             var newVote = arg({ alexandre_astier: 50, kendji_girac: 30 });
             expect(newVote.alexandre_astier).toBe(51);
             expect(newVote.kendji_girac).toBe(30);
+        });
+
+        it('should return an proper error message when voting fails', function(done) {
+            spyOn(window, 'Firebase');
+            spyOn($mockFirebaseObjectReturn, '$loaded').and.returnValue(rejectedPromise());
+
+            celebritiesManager.voteForACelebrity(mockCelebrities.slice(0, 2), mockCelebrities[0])
+                .then(onResolve, onReject)
+                .finally(done);
+
+            $rootScope.$digest();
+
+            function onResolve() {
+                fail('Promise should be rejected');
+            }
+
+            function onReject(v) {
+                expect(v).toBe("Impossible d'enregistrer votre vote pour le moment ... :(");
+            }
         });
 
         it('should call simpleLocalPersistence.set method', function() {

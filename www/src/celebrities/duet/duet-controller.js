@@ -1,6 +1,6 @@
 angular.module('lpc.celebrities.duet.duetController', ['lpc.celebrities.celebritiesManager', 'lpc.celebrities.card', 'lpc.celebrities.duet.duetChart'])
 
-.controller('CelebritiesDuetCtrl', function($cordovaDialogs, celebritiesManager, imagesOrigin, celebrities) {
+.controller('CelebritiesDuetCtrl', function($q, $cordovaDialogs, celebritiesManager, imagesOrigin, celebrities) {
     var vm = this;
     var fc = celebrities[0], sc = celebrities[1];
 
@@ -18,6 +18,7 @@ angular.module('lpc.celebrities.duet.duetController', ['lpc.celebrities.celebrit
         .then(showChartLoadingSpinner)
         .then(getVotesData)
         .then(initChartData)
+        .catch(handleError)
         .finally(hideChartLoadingSpinner);
 
     function submitAVote() {
@@ -26,7 +27,9 @@ angular.module('lpc.celebrities.duet.duetController', ['lpc.celebrities.celebrit
         celebritiesManager.voteForACelebrity(vm.choices, vm.currentChoice)
             .then(logUserVote)
             .then(getVotesData)
-            .then(initChartData, handleVotesDataError)
+            .then(initChartData)
+            .then(null, markVoteAsNotSubmittedAndReject)
+            .catch(handleError)
             .finally(hideChartLoadingSpinner);
     }
 
@@ -52,6 +55,11 @@ angular.module('lpc.celebrities.duet.duetController', ['lpc.celebrities.celebrit
         vm.voteSubmitted = true;
     }
 
+    function markVoteAsNotSubmittedAndReject(err) {
+        vm.voteSubmitted = false;
+        return $q.reject(err);
+    }
+
     function logUserVote() {
         return celebritiesManager.logUserVote(vm.choices, vm.currentChoice);
     }
@@ -60,8 +68,8 @@ angular.module('lpc.celebrities.duet.duetController', ['lpc.celebrities.celebrit
         return celebritiesManager.getUserVote(vm.choices);
     }
 
-    function handleVotesDataError() {
-        $cordovaDialogs.alert("Impossible d'obtenir les votes pour ces célébrités ... :(", "Hum ...");
+    function handleError(err) {
+        if (err) { $cordovaDialogs.alert(err, "Hum ..."); }
     }
 
     function showChartLoadingSpinner() {

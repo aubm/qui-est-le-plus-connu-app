@@ -19,7 +19,8 @@ angular.module('lpc.celebrities.celebritiesManager', ['firebase', 'lpc.common.p
 
     function getVotesForCelebrities(celebrities) {
         var ref = new Firebase(firebaseOrigin + '/votes/' + getVoteIndexForCelebrities(celebrities));
-        return $firebaseObject(ref).$loaded();
+        return $firebaseObject(ref).$loaded()
+            .then(null, function() { return $q.reject("Impossible d'obtenir les votes pour ces célébrités ... :("); });
     }
 
     function voteForACelebrity(celebrities, voted) {
@@ -30,6 +31,8 @@ angular.module('lpc.celebrities.celebritiesManager', ['firebase', 'lpc.common.p
                     vote[voted.id] = (vote[voted.id] || 0) + 1;
                     return vote;
                 });
+            }, function() {
+                return $q.reject("Impossible d'enregistrer votre vote pour le moment ... :(");
             });
     }
 
