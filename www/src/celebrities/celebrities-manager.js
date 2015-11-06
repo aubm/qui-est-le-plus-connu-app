@@ -19,21 +19,41 @@ angular.module('lpc.celebrities.celebritiesManager', ['firebase', 'lpc.common.p
 
     function getVotesForCelebrities(celebrities) {
         var ref = new Firebase(firebaseOrigin + '/votes/' + getVoteIndexForCelebrities(celebrities));
-        return $firebaseObject(ref).$loaded()
-            .then(null, function() { return $q.reject("Impossible d'obtenir les votes pour ces célébrités ... :("); });
+        return $firebaseObject(ref).$loaded().then(restructureVoteDataObj, rewriteErrorMessage);
+
+        function restructureVoteDataObj(data) {
+            var voteData = {};
+            voteData[data.fc.slug] = data.fc.counter;
+            voteData[data.sc.slug] = data.sc.counter;
+            return voteData;
+        }
+
+        function rewriteErrorMessage() {
+            return $q.reject("Impossible d'obtenir les votes pour ces célébrités ... :(");
+        }
     }
 
     function voteForACelebrity(celebrities, voted) {
         var ref = new Firebase(firebaseOrigin + '/votes/' + getVoteIndexForCelebrities(celebrities));
-        return $firebaseObject(ref).$loaded()
-            .then(function() {
-                ref.transaction(function(vote) {
-                    vote[voted.id] = (vote[voted.id] || 0) + 1;
-                    return vote;
-                });
-            }, function() {
-                return $q.reject("Impossible d'enregistrer votre vote pour le moment ... :(");
+        return $firebaseObject(ref).$loaded().then(updateVote, rewriteErrorMessage);
+
+        function updateVote() {
+            ref.transaction(function(vote) {
+                if (vote === null) {
+                    vote = {
+                        fc: { slug: celebrities[0].id, counter: 0 },
+                        sc: { slug: celebrities[1].id, counter: 0 }
+                    };
+                }
+                if (voted.id === vote.fc.slug) { vote.fc.counter++; }
+                if (voted.id === vote.sc.slug) { vote.sc.counter++; }
+                return vote;
             });
+        }
+
+        function rewriteErrorMessage() {
+            return $q.reject("Impossible d'enregistrer votre vote pour le moment ... :(");
+        }
     }
 
     function getVoteIndexForCelebrities(celebrities) {
